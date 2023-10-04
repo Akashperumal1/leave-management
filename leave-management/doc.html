@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Leave Management System</title>
+</head>
+<style>
+ /* Reset some default styles */
+body, h1 {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form container */
+#leaveForm {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Form hover effect */
+#leaveForm:hover {
+    transform: scale(1.02);
+}
+
+/* Form labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Form input elements */
+input[type="text"],
+input[type="file"],
+select,
+textarea,
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+/* Input hover effect */
+input[type="text"]:hover,
+input[type="file"]:hover,
+select:hover,
+textarea:hover,
+input[type="number"]:hover {
+    border-color: #007BFF;
+}
+
+/* Submit button */
+button[type="submit"] {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Button hover effect */
+button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Leave Details container */
+#leaveDetails {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    display: none; /* Hide it by default */
+}
+
+/* Leave Details heading */
+#leaveDetails h2 {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Leave Details data */
+#leaveDetails p {
+    margin: 10px 0;
+}
+
+/* Profile image styling */
+#displayedProfile {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+</style>
+<body>
+    <h1>Leave Application</h1>
+    <form id="leaveForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br>
+
+        <label for="profileImage">Profile Image:</label>
+        <input type="file" id="profileImage" accept="image/*" required><br>
+
+        <label for="leaveType">Leave Type:</label>
+        <select id="leaveType" required>
+            <option value="casual">Casual Leave</option>
+            <option value="medical">Medical Leave</option>
+        </select><br>
+
+        <label for="reason">Reason:</label>
+        <textarea id="reason" required></textarea><br>
+
+        <label for="days">Number of Days:</label>
+        <input type="number" id="days" required><br>
+
+        <button type="submit">Apply for Leave</button>
+    </form>
+    <div id="leaveDetails">
+        <h2>Leave Details</h2>
+        <p><strong>Name:</strong> <span id="displayedName"></span></p>
+        <p><strong>Profile Image:</strong></p>
+        <img id="displayedProfile" src="" alt="Profile Image" style="max-width: 200px;">
+        <p><strong>Leave Type:</strong> <span id="displayedLeaveType"></span></p>
+        <p><strong>Reason:</strong> <span id="displayedReason"></span></p>
+        <p><strong>Number of Days:</strong> <span id="displayedDays"></span></p>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+// Define variables to keep track of total leave days
+let totalCasualLeaveDays = 0;
+let totalMedicalLeaveDays = 0;
+
+document.getElementById("leaveForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const leaveType = document.getElementById("leaveType").value;
+    const reason = document.getElementById("reason").value;
+    const days = parseInt(document.getElementById("days").value); // Parse days as an integer
+
+    // Define leave restrictions for casual and medical leaves
+    const casualLeaveReasons = ["ILL Health", "Emergency situation in the family", "Physical damage", "Bereavement leave", "Accident"];
+    const medicalLeaveReasons = ["Injury", "Medical appointment", "Diagnosed medical condition", "Hospitalization", "Pregnancy or delivery"];
+
+    // Check if the selected reason is valid for the chosen leave type
+    let validReasons = [];
+    if (leaveType === "casual") {
+        validReasons = casualLeaveReasons;
+    } else if (leaveType === "medical") {
+        validReasons = medicalLeaveReasons;
+    }
+
+    if (!validReasons.includes(reason)) {
+        alert('Invalid reason selected for the leave type');
+        return;
+    }
+
+    // Check if the number of leave days exceeds the allowed limit
+    let maxDays = 0;
+    let leaveTypeText = "";
+    if (leaveType === "casual") {
+        maxDays = 15; // Allow a maximum of 15 casual leave days
+        totalCasualLeaveDays += days; // Add the current leave days to total casual leave days
+        leaveTypeText = "Casual Leave";
+    } else if (leaveType === "medical") {
+        maxDays = 10; // Allow a maximum of 10 medical leave days
+        totalMedicalLeaveDays += days; // Add the current leave days to total medical leave days
+        leaveTypeText = "Medical Leave";
+    }
+
+    if (days > maxDays) {
+        alert(`Exceeded the maximum allowed ${leaveTypeText} days (${maxDays} days)`);
+        return;
+    }
+
+    // Calculate total leave days
+    const totalLeaveDays = totalCasualLeaveDays + totalMedicalLeaveDays;
+
+    // Check if the total leave days exceed the threshold
+    if ((totalLeaveDays / (15 + 10)) * 100 >= 75) {
+        alert('Exceeded the maximum total leave threshold');
+        return;
+    }
+
+    // Redirect to detail.html with leave details as URL parameters
+    const queryParams = `?name=${encodeURIComponent(name)}&leaveType=${encodeURIComponent(leaveType)}&reason=${encodeURIComponent(reason)}&days=${encodeURIComponent(days)}`;
+    window.location.href = `detial.html${queryParams}`;
+});
+
+
+    
+    
+
+    </script>
+</body>
+</html>

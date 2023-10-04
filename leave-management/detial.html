@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+        /* Reset some default styles */
+body, h1 {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+h1 {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Leave Details container */
+#leaveDetails {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    padding: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Leave Details heading */
+#leaveDetails h1 {
+    color: #007BFF;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Leave Details data */
+#leaveDetails p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Details</title>
+</head>
+<body>
+    <h1>Leave Details</h1>
+    <div id="leaveDetails">
+        <p><strong>Name:</strong> <span id="displayedName"></span></p>
+        <p><strong>Leave Type:</strong> <span id="displayedLeaveType"></span></p>
+        <p><strong>Reason:</strong> <span id="displayedReason"></span></p>
+        <p><strong>Number of Days:</strong> <span id="displayedDays"></span></p>
+    </div>
+
+    <script>
+        // Retrieve URL parameters and display leave details
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("displayedName").textContent = urlParams.get("name");
+        document.getElementById("displayedLeaveType").textContent = urlParams.get("leaveType");
+        document.getElementById("displayedReason").textContent = urlParams.get("reason");
+        document.getElementById("displayedDays").textContent = urlParams.get("days");
+    </script>
+</body>
+</html>
